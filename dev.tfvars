@@ -17,3 +17,24 @@ security_group_vpc_id = "vpc-e8d51e8e"
 security_group_ingress = [{from_port = 80, to_port = 80, protocol = "tcp", cidr_blocks = "0.0.0.0/0"}]
 security_group_egress = [{from_port = 0, to_port = 0, protocol = "-1", cidr_blocks = "0.0.0.0/0"}]
 vpc_id = "vpc-e8d51e8e"
+## APPLICATION LOAD BALANCER
+alb_name = "wordpress"
+alb_internal = false
+alb_idle_timeout = 60
+alb_idle_load_balancer_type = "application"
+alb_idle_enable_deletion_protection = false
+alb_idle_enable_cross_zone_load_balancing = true
+alb_target_group_name = "wordpress"
+alb_target_group_port = 80
+alb_target_group_protocol = "HTTP"
+alb_target_group_stickiness_type = "lb_cookie"
+alb_target_group_stickiness_cookie_duration = 86400
+alb_target_group_health_check_path = "/wordpress/login"
+alb_target_group_health_check_healthy_threshold = 2
+alb_target_group_health_check_unhealthy_threshold = 2
+alb_target_group_health_check_timeout = 10
+alb_target_group_health_check_interval = 30
+alb_target_group_health_check_matcher = "200,301,302"
+route53_record_name = "www"
+route53_record_type = "A"
+route53_record_alias_evaluate_target_health =  true
