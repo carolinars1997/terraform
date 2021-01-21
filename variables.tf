@@ -148,3 +148,30 @@ variable "route53_record_type" {
     type        = string
     description = "route53 record type."
 }
+variable "launch_template_name_prefix" {
+    type        = string
+}
+
+variable "launch_template_image_id" {
+    type        = string
+}
+
+variable "launch_template_instance_type" {
+    type        = string
+}
+#AUTOSCALING
+variable "autoscaling_group_desired_capacity" {
+    type        = number
+}
+
+variable "autoscaling_group_max_size" {
+    type        = number
+}
+
+variable "autoscaling_group_min_size" {
+    type        = number
+}
+
+variable "autoscaling_group_launch_template_version" {
+    type        = string
+}

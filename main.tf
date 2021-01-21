@@ -105,3 +105,27 @@ resource "aws_route53_record" "www" {
   }
 
 }
+
+# AUTO SCALING
+resource "aws_launch_template" "launch_template_terraform" {
+    name_prefix   = var.launch_template_name_prefix
+    image_id      = var.launch_template_image_id
+    instance_type = var.launch_template_instance_type
+}
+
+resource "aws_autoscaling_group" "autoscaling_group_terraform" {
+    vpc_zone_identifier = data.aws_subnet_ids.subnet_ids_terraform.ids
+    desired_capacity   = var.autoscaling_group_desired_capacity
+    max_size           = var.autoscaling_group_max_size
+    min_size           = var.autoscaling_group_min_size
+
+    launch_template {
+        id             = aws_launch_template.launch_template_terraform.id
+        version        = var.autoscaling_group_launch_template_version
+    }
+}
+
+resource "aws_autoscaling_attachment" "autoscaling_attachment_terraform" {
+    autoscaling_group_name = aws_autoscaling_group.autoscaling_group_terraform.name
+    alb_target_group_arn   = aws_alb_target_group.alb_target_group_terraform.arn
+}
