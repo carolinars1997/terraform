@@ -1,3 +1,4 @@
+#R53
 route53_zone_name = "wordpress2021-prueba.com"
 ##RDS
 db_instance_allocated_storage = 50
@@ -37,6 +38,7 @@ alb_target_group_health_check_interval = 30
 alb_target_group_health_check_matcher = "200,301,302"
 route53_record_name = "www"
 route53_record_type = "A"
+#AUTO SCALING
 route53_record_alias_evaluate_target_health =  true
 launch_template_name_prefix = "wordpress"
 launch_template_image_id = "ami-03130878b60947df3" 

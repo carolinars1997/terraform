@@ -143,11 +143,12 @@ variable "route53_record_name" {
     type        = string
     description = "route53 record name."
 }
-##
+
 variable "route53_record_type" {
     type        = string
     description = "route53 record type."
 }
+#TEMPLATE AUTOSCALING
 variable "launch_template_name_prefix" {
     type        = string
 }

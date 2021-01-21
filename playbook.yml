@@ -1,0 +1,54 @@
+---
+  - hosts: all
+    become: yes
+    become_user: root
+    become_method: sudo
+
+    vars:
+          system_user: ec2-user
+
+          packages:
+          - git
+          - unzip
+          - httpd
+          - php 
+          - php-mysqlnd 
+          - php-pdo 
+          - php-gd 
+          - php-mbstring
+
+          tmp_dir: '/home/{{ system_user }}'
+          wordpress_url: 'http://wordpress.org/latest.tar.gz'
+          http_path: '/var/www/html/'
+          http_user: 'apache'
+
+    gather_facts: no
+
+    tasks:
+    - name: list of yum packages are installed
+      yum:
+        name: '{{ packages }}'
+        state: latest
+        update_cache: yes
+
+    - name: copy file
+      copy:
+        src: /tmp/httpd.conf
+        dest: /etc/httpd/conf/httpd.conf
+        owner: '{{ http_user }}'
+        group: '{{ http_user }}'
+        mode: '0755'
+
+    - name: restart httpd
+      service:
+        name: httpd
+        state: restarted
+
+    - name: extract wordpress
+      unarchive:
+        src: '{{ wordpress_url }}'
+        dest: '{{ http_path }}'
+        remote_src: yes
+        owner: '{{ http_user }}'
+        group: '{{ http_user }}'
+        mode: '0755'

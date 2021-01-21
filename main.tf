@@ -4,11 +4,13 @@ provider "aws" {
     region     = "us-west-1"
 }
 
-##route 53
+##Recurso para crear el nombre dek dominio wordpress2021-prueba.com
+#Servicio usado Route 53
 resource "aws_route53_zone" "route53_zone_terraform" {
     name       = var.route53_zone_name
 }
-##BASE DE DATOS
+##Recurso para la creacion de la BASE DE DATOS (RDS) con mysql
+#esta configurado para que utilice 2 zonas 
 resource "aws_db_instance" "db_instance_terraform" {
     allocated_storage     = var.db_instance_allocated_storage
     max_allocated_storage = var.db_instance_max_allocated_storage
@@ -23,7 +25,7 @@ resource "aws_db_instance" "db_instance_terraform" {
     multi_az              = var.db_instance_multi_az
     
 }
-##SECURITY GROUP
+## Recurso para la creacion de el SECURITY GROUP
 resource "aws_security_group" "security_group_terraform" {
     name       = var.security_group_name
     vpc_id     = var.security_group_vpc_id
@@ -43,11 +45,11 @@ resource "aws_security_group" "security_group_terraform" {
         }
     }
     dynamic "egress" {
-        for_each = [ for e in  var.security_group_egress: {
-            from_port   = e.from_port
-            to_port     = e.to_port
-            protocol    = e.protocol
-            cidr_blocks = e.cidr_blocks
+        for_each = [ for x in  var.security_group_egress: {
+            from_port   = x.from_port
+            to_port     = x.to_port
+            protocol    = x.protocol
+            cidr_blocks = x.cidr_blocks
         }]
 
         content {
@@ -58,11 +60,13 @@ resource "aws_security_group" "security_group_terraform" {
         }
     }
 }
+##En la variable vpc_id se obtiene las redes disponibles
 data "aws_subnet_ids" "subnet_ids_terraform" {
     vpc_id = var.vpc_id
 }
 
-##APLICATION LOAD BALANCER ALB
+##Creacion del recurso (APLICATION LOAD BALANCER) para poder 
+##distribuir automáticamente el tráfico
 resource "aws_lb" "alb_terraform" {
     name                             = var.alb_name
     internal                         = var.alb_internal
@@ -93,7 +97,7 @@ resource "aws_alb_target_group" "alb_target_group_terraform" {
         protocol            = var.alb_target_group_protocol
     }
 }
-
+##Recurso para creacion de un alias para R53
 resource "aws_route53_record" "www" {
     zone_id                    = aws_route53_zone.route53_zone_terraform.zone_id
     name                       = var.route53_record_name
@@ -106,13 +110,16 @@ resource "aws_route53_record" "www" {
 
 }
 
-# AUTO SCALING
+# Recurso del template que usara el grupo de auto scaling
+
 resource "aws_launch_template" "launch_template_terraform" {
     name_prefix   = var.launch_template_name_prefix
     image_id      = var.launch_template_image_id
     instance_type = var.launch_template_instance_type
 }
-
+# Creacion de AUTO SCALING configurados para crear
+#dos instancias en zonas diferenres para garantizar 
+#la redudancia
 resource "aws_autoscaling_group" "autoscaling_group_terraform" {
     vpc_zone_identifier = data.aws_subnet_ids.subnet_ids_terraform.ids
     desired_capacity   = var.autoscaling_group_desired_capacity
