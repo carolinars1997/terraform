@@ -1,0 +1,14 @@
+{
+    "aws_access_key": "",
+    "aws_secret_key": "",
+    "ami_prefix": "AMI-devops",
+    "ami_description": "ami devops",
+    "region": "us-west-1",
+    "vpc_id": "vpc-e8d51e8e",
+    "subnet_id": "subnet-3857ed5e",
+    "source_ami": "ami-09d9c5cdcfb8fc655",
+    "instance_type": "t2.medium",
+    "ssh_username": "ec2-user",
+    "encrypt_boot": "true"
+    
+  }
